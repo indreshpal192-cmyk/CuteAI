@@ -5,6 +5,12 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
+PASSCODE = os.getenv("PASSCODE")
+if PASSCODE:
+    entered = st.text_input("🔒 Passcode", type="password")
+    if entered != PASSCODE:
+        st.warning("Wrong passcode")
+        st.stop()
 KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or os.getenv("API_KEY")
 MODEL = os.getenv("MODEL", "gemini-3.5-flash-lite")
 client = OpenAI(api_key=KEY, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
@@ -45,7 +51,7 @@ def remember(fact):
 
 FUNCS = {"get_time": get_time, "remember": remember}
 TOOLS = [
-    {"type": "function", "function": {"name": "get_time", "description": "Get the current date and time", "parameters": {"type": "object", "properties": {}}}},
+    {"type": "function", "function": {"name": "get_time", "description": "Get the current date and time", "parameters": {"type": "object","properties": {"unused": {"type": "string", "description": "not used"}}}}},
     {"type": "function", "function": {"name": "remember", "description": "Save an important lasting fact about the user", "parameters": {"type": "object", "properties": {"fact": {"type": "string"}}, "required": ["fact"]}}},
 ]
 
